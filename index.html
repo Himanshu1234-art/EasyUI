@@ -1,0 +1,1042 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EasyUI — HCI Learning Lab</title>
+<style>
+:root{--bg:#f5f7fb;--surface:#fff;--ink:#172033;--muted:#647087;--line:#e1e7f0;--primary:#4f46e5;--good:#087f5b;--good-bg:#e7f8f0;--bad:#b42318;--bad-bg:#fff0ee;--soft:#eef2ff;--shadow:0 8px 24px #1f293710}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Segoe UI,sans-serif;line-height:1.6}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
+.sidebar{position:fixed;inset:0 auto 0 0;width:235px;background:#111827;color:white;padding:24px 16px;z-index:5;display:flex;flex-direction:column}
+.brand{font-size:23px;font-weight:800;margin:0 8px}
+.brand small{display:block;color:#aeb8ca;font-size:11px;font-weight:400}
+.nav-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#8793a8;margin:28px 10px 8px}
+.nav button{width:100%;display:block;text-align:left;border:0;background:transparent;color:#cbd5e1;padding:12px;border-radius:10px;margin:3px 0}
+.nav button:hover,.nav button.active{background:#293348;color:white}
+.sidebar-note{margin-top:auto;padding:13px;background:#1f2937;border:1px solid #374151;border-radius:12px;color:#cbd5e1;font-size:12px}
+main{margin-left:235px;padding:28px clamp(16px,4vw,48px);max-width:1600px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:12px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.3px;color:var(--primary);font-weight:bold}
+h1{font-size:clamp(26px,3vw,36px);line-height:1.2;margin:5px 0}
+h2{font-size:24px;margin:0 0 6px}
+h3{font-size:17px;margin:0 0 8px}
+p{margin:8px 0;color:var(--muted)}
+.pill,.tag{display:inline-block;border-radius:30px;padding:5px 10px;font-size:11px;font-weight:bold;background:#eef2ff;color:#3730a3}
+.tag.good{background:var(--good-bg);color:var(--good)}
+.tag.bad{background:var(--bad-bg);color:var(--bad)}
+.section{display:none}
+.section.active{display:block;animation:appear .2s ease}
+@keyframes appear{from{opacity:.5}to{opacity:1}}
+.hero{background:linear-gradient(120deg,#312e81,#4f46e5 60%,#818cf8);border-radius:22px;padding:clamp(24px,4vw,42px);color:white}
+.hero h2{font-size:clamp(29px,4vw,43px);max-width:700px;line-height:1.15;margin:12px 0}
+.hero p{color:#e0e7ff;max-width:650px}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+.hero-tags span{font-size:12px;background:#ffffff20;border:1px solid #ffffff40;border-radius:30px;padding:5px 10px}
+.btn{border:0;border-radius:9px;padding:10px 15px;background:var(--primary);color:white;font-weight:bold}
+.btn:hover{filter:brightness(.9)}
+.btn.secondary{background:#eef2ff;color:#3730a3}
+.btn.ghost{background:white;color:var(--ink);border:1px solid var(--line)}
+.btn.wide{width:100%;margin-top:16px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:28px 0 15px}
+.section-head p{margin:4px 0 0}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:15px}
+.card{background:white;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);min-width:0}
+.s3{grid-column:span 3}.s4{grid-column:span 4}.s5{grid-column:span 5}.s6{grid-column:span 6}.s7{grid-column:span 7}.s12{grid-column:span 12}
+.metric{font-size:30px;font-weight:800}
+.muted{color:var(--muted)}
+.tiny{font-size:12px}
+.iconbox{width:42px;height:42px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font-size:20px;margin-bottom:12px}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.demo{border:1px solid var(--line);border-radius:13px;overflow:hidden;background:white;min-width:0}
+.demo.bad{border-color:#f1c8c4}
+.demo.good{border-color:#a7dfc5}
+.demo-head{padding:11px 13px;background:#f8fafc;border-bottom:1px solid var(--line);font-size:13px;font-weight:bold;display:flex;justify-content:space-between;gap:7px;flex-wrap:wrap}
+.demo.bad .demo-head{background:#fff4f2}
+.demo.good .demo-head{background:#effcf5}
+.demo-body{padding:16px}
+.demo label{display:block;font-size:12px;font-weight:bold;margin:12px 0 6px}
+.demo input{width:100%;border:1px solid #cbd3df;border-radius:8px;padding:10px;background:white;color:var(--ink);margin:0 0 10px}
+.demo-body form button,.demo-body>button{margin-top:16px}
+.demo-body form .tiny{margin-top:2px;margin-bottom:8px}
+.feedback{font-size:12px;margin-top:12px;min-height:18px;color:var(--muted)}
+.status{font-size:12px;padding:9px;border-radius:8px;margin-top:12px}
+.status.error{background:var(--bad-bg);color:var(--bad)}
+.status.success{background:var(--good-bg);color:var(--good)}
+.fake-link{color:var(--bad);text-decoration:underline;cursor:pointer;font-size:12px}
+.sample{border:1px dashed #d2d7e2;padding:9px;border-radius:8px;font-size:11px;color:#7c8495}
+.mini-nav,.clean-nav{display:flex;gap:5px;flex-wrap:wrap}
+.mini-nav button,.clean-nav button{border:0;padding:8px;border-radius:7px;font-size:11px}
+.mini-nav button{background:#e8eaf0;color:#596274}
+.clean-nav button{background:#eef2ff;color:#3730a3}
+.order-row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.order-row.total{font-weight:bold;border:0;font-size:15px}
+.rating-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:15px}
+.star{border:1px solid #d9deea;background:white;border-radius:8px;padding:7px 10px;font-size:12px}
+.star.selected{background:#fff4cc;color:#9a6700;border-color:#eab308}
+.rating-feedback{width:100%;flex-basis:100%;padding:10px 12px;border-radius:9px;background:#f8fafc;border:1px solid var(--line);font-size:13px;color:var(--ink);margin-top:5px}
+.concept-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.concept{padding:17px;border:1px solid var(--line);border-radius:13px;background:white}
+.concept .number{width:30px;height:30px;display:grid;place-items:center;background:#eef2ff;color:#3730a3;border-radius:8px;font-weight:bold;margin-bottom:10px}
+.concept h3{font-size:15px}
+.concept p{font-size:13px;margin:0}
+.notice{padding:12px 14px;border-radius:10px;background:#eef2ff;color:#3730a3;font-size:13px;margin:12px 0}
+.quiz-option{display:block;width:100%;text-align:left;padding:11px;border:1px solid var(--line);border-radius:9px;background:white;margin:7px 0}
+.quiz-option:hover{border-color:var(--primary);background:#f7f7ff}
+.quiz-option.correct{border-color:#059669;background:#ecfdf5}
+.quiz-option.incorrect{border-color:#dc2626;background:#fff1f2}
+.barline{display:flex;align-items:center;gap:10px;margin:13px 0;font-size:12px}
+.barline .name{width:145px}
+.track{height:9px;background:#edf0f6;border-radius:20px;flex:1;overflow:hidden}
+.fill{height:100%;background:var(--primary);border-radius:20px}
+.barline .value{width:35px;text-align:right;font-weight:bold}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:11px;border-bottom:1px solid var(--line)}
+th{font-size:11px;color:var(--muted);text-transform:uppercase}
+.table-wrap{overflow-x:auto}
+footer{margin-top:32px;border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:12px}
+@media(max-width:1050px){.sidebar{width:210px}main{margin-left:210px}.s3,.s4{grid-column:span 6}.s5,.s7{grid-column:span 12}.concept-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.sidebar{position:relative;width:auto;padding:12px}.brand small,.nav-label,.sidebar-note{display:none}.nav{display:flex;overflow-x:auto;gap:4px;margin-top:10px}.nav button{white-space:nowrap;width:auto;margin:0;padding:9px}main{margin:0;padding:18px 13px}.topbar{align-items:flex-start}.pill{display:none}.s3,.s4,.s5,.s6,.s7,.s12{grid-column:span 12}.comparison,.concept-grid{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}.card{padding:16px}.barline .name{width:105px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important}}
+body.large-text p,body.large-text li,body.large-text label,body.large-text input,body.large-text button,body.large-text td,body.large-text th,body.large-text .demo-body,body.large-text .feedback,body.large-text .notice{font-size:1.18em!important}
+body.high-contrast{--bg:#000;--ink:#fff;--muted:#f1f5f9;--line:#fff;--primary:#ffeb3b;--soft:#222;--good-bg:#063b2a;--bad-bg:#4a100d;--shadow:none}
+body.high-contrast .card,body.high-contrast .demo,body.high-contrast .concept,body.high-contrast .quiz-option,body.high-contrast .star,body.high-contrast input,body.high-contrast select,body.high-contrast textarea,body.high-contrast .demo-head,body.high-contrast .track{background:#000;color:#fff;border-color:#fff}
+body.high-contrast .demo.bad .demo-head{background:#3b0b08}
+body.high-contrast .demo.good .demo-head{background:#063b2a}
+body.high-contrast .btn.secondary,body.high-contrast .btn.ghost,body.high-contrast .nav button.active,body.high-contrast .nav button:hover{background:#ffeb3b;color:#000}
+body.high-contrast .tag,body.high-contrast .pill,body.high-contrast .notice,body.high-contrast .concept .number{background:#ffeb3b;color:#000}
+body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+.task-item{border:1px solid var(--line);border-radius:12px;padding:15px;margin:12px 0}
+.task-item p{margin:5px 0 10px}
+.task-meta{display:flex;gap:15px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px}
+.survey-comment{padding:10px;margin-top:8px;background:var(--bg);border-radius:8px;overflow-wrap:anywhere}
+.accessibility-controls{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+.accessibility-controls .btn{min-width:145px}
+@media(max-width:700px){.task-meta{gap:8px}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand">✦ EasyUI<small>HCI Learning Lab</small></div>
+  <div class="nav-label">Workspace</div>
+  <nav class="nav" aria-label="Main navigation">
+    <button class="active" data-page="dashboard">▦ Dashboard</button>
+    <button data-page="challenge">⚖ Usability Lab</button>
+    <button data-page="principles">✦ HCI Principles</button>
+    <button data-page="results">▤ Results &amp; Insights</button>
+    <button data-page="about">ⓘ About Study</button>
+    <button data-page="testing">✓ Usability Test</button>
+    <button data-page="accessibilitySettings">♿ Accessibility</button>
+    <button data-page="survey">☷ Feedback Survey</button>
+  </nav>
+  <div class="sidebar-note"><strong>Project objective</strong><br>Explore how interface design affects usability, clarity, accessibility and user confidence.</div>
+</aside>
+
+<main>
+<header class="topbar">
+  <div>
+    <div class="eyebrow">Human-Computer Interaction</div>
+    <h1 id="pageTitle">Design for people.</h1>
+    <p id="pageSubtitle">Discover how small design choices make websites easier to use.</p>
+  </div>
+  <span class="pill">● Interactive demo</span>
+</header>
+
+<section class="section active" id="dashboard">
+  <div class="hero">
+    <div class="eyebrow" style="color:#c7d2fe">Welcome to EasyUI</div>
+    <h2>Good design makes the next step feel obvious.</h2>
+    <p>Compare common interface patterns, try both versions and discover how HCI principles help people complete tasks with less confusion.</p>
+    <div class="hero-tags"><span>Usability</span><span>Feedback</span><span>Error prevention</span><span>Accessibility</span><span>Consistency</span></div>
+    <button class="btn" style="background:white;color:#3730a3" data-goto="challenge">Explore usability comparisons →</button>
+  </div>
+  <div class="section-head"><div><h2>Your HCI workspace</h2><p>Five practical examples to explore and explain during your presentation.</p></div></div>
+  <div class="grid">
+    <div class="card s3"><div class="iconbox">🔐</div><div class="metric">01</div><h3>Sign-in design</h3><p>Clear labels and helpful feedback.</p><span class="tag">Learnability</span></div>
+    <div class="card s3"><div class="iconbox">🧭</div><div class="metric">02</div><h3>Navigation</h3><p>Compare unclear and descriptive menus.</p><span class="tag">Recognition</span></div>
+    <div class="card s3"><div class="iconbox">📝</div><div class="metric">03</div><h3>Form errors</h3><p>Help people identify and fix mistakes.</p><span class="tag">Error recovery</span></div>
+    <div class="card s3"><div class="iconbox">🛒</div><div class="metric">04</div><h3>Checkout</h3><p>Make costs and confirmation visible.</p><span class="tag">System status</span></div>
+    <div class="card s6"><div class="iconbox">♿</div><h3>Accessibility &amp; readability</h3><p>Compare difficult-to-read content with clearer text, better contrast and keyboard focus.</p><span class="tag good">Inclusive design</span></div>
+    <div class="card s6"><div class="iconbox">📊</div><h3>Evaluate and reflect</h3><p>Rate each comparison, view your ratings and take a short HCI quiz.</p><button class="btn secondary" data-goto="results">View results</button></div>
+  </div>
+  <div class="notice">This is an educational prototype. Ratings are only demo-session feedback until you test the designs with real participants.</div>
+</section>
+
+<section class="section" id="challenge">
+<div class="section-head"><div><h2>Usability Challenge</h2><p>Try five interface comparisons, then rate which version you find easier to use.</p></div><span class="tag">5 comparisons</span></div>
+
+<article class="card">
+  <div class="section-head" style="margin-top:0"><div><h2>01 · Sign-in form</h2><p>Can people understand what to enter and what to do next?</p></div><span class="tag">Learnability · Feedback</span></div>
+  <div class="comparison">
+    <div class="demo bad">
+      <div class="demo-head">Version A · Confusing <span class="tag bad">Needs improvement</span></div>
+      <div class="demo-body">
+        <div class="sample">USER DATA / AUTH</div>
+        <label for="badEmail">ID</label><input id="badEmail" type="text" placeholder="Enter email address" autocomplete="off">
+        <label for="badPassword">Key</label><input id="badPassword" type="password" placeholder="Enter password" autocomplete="off">
+        <button class="btn wide" id="badLoginGo" type="button" style="background:#8790a1">Go</button>
+        <div class="feedback" id="badLoginFeedback" role="status" aria-live="polite">Enter your details to sign in.</div>
+      </div>
+    </div>
+    <div class="demo good">
+      <div class="demo-head">Version B · Improved <span class="tag good">Recommended</span></div>
+      <div class="demo-body">
+        <h3>Welcome back</h3><p class="tiny">Sign in to continue to your account.</p>
+        <form id="goodLoginForm" novalidate>
+          <label for="goodEmail">Email address</label>
+          <input id="goodEmail" type="email" placeholder="you@example.com" autocomplete="off" required>
+          <label for="goodPassword">Password</label>
+          <input id="goodPassword" type="password" placeholder="Enter your password" autocomplete="off" required minlength="5" aria-describedby="passwordHint goodLoginFeedback">
+          <p class="tiny" id="passwordHint">Use at least 5 characters.</p>
+          <button class="btn wide" type="submit">Sign in</button>
+          <div class="feedback" id="goodLoginFeedback" role="status" aria-live="polite">Enter your email address and password.</div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="rating-row" data-rating="signin">
+    <strong class="tiny">Which is easier?</strong>
+    <button class="star" data-score="1">A is easier</button>
+    <button class="star" data-score="3">B is easier</button>
+    <button class="star" data-score="2">Both are the same</button>
+    <div class="rating-feedback" id="rating-signin" role="status" aria-live="polite" hidden></div>
+  </div>
+</article>
+
+<article class="card" style="margin-top:17px">
+  <div class="section-head" style="margin-top:0"><div><h2>02 · Navigation menu</h2><p>Can people predict where each menu item will take them?</p></div><span class="tag">Consistency · Recognition</span></div>
+  <div class="comparison">
+    <div class="demo bad">
+      <div class="demo-head">Version A · Confusing <span class="tag bad">Unclear labels</span></div>
+      <div class="demo-body">
+        <div class="mini-nav">
+          <button data-nav="A" data-label="Thing 1">Thing 1</button>
+          <button data-nav="A" data-label="Thing 2">Thing 2</button>
+          <button data-nav="A" data-label="Thing 3">Thing 3</button>
+          <button data-nav="A" data-label="Thing 4">Thing 4</button>
+        </div>
+        <div class="status error" id="navA" role="status" aria-live="polite">Choose an item to see what happens.</div>
+      </div>
+    </div>
+    <div class="demo good">
+      <div class="demo-head">Version B · Improved <span class="tag good">Descriptive labels</span></div>
+      <div class="demo-body">
+        <div class="clean-nav"><button data-nav="B" data-label="Home">Home</button><button data-nav="B" data-label="Services">Services</button><button data-nav="B" data-label="Pricing">Pricing</button><button data-nav="B" data-label="Help">Help</button></div>
+        <div class="status success" id="navB" role="status" aria-live="polite">Choose a section to preview its purpose.</div>
+      </div>
+    </div>
+  </div>
+  <div class="rating-row" data-rating="navigation">
+    <strong class="tiny">Which is easier?</strong>
+    <button class="star" data-score="1">A is easier</button>
+    <button class="star" data-score="3">B is easier</button>
+    <button class="star" data-score="2">Both are the same</button>
+    <div class="rating-feedback" id="rating-navigation" role="status" aria-live="polite" hidden></div>
+  </div>
+</article>
+
+<article class="card" style="margin-top:17px">
+  <div class="section-head" style="margin-top:0"><div><h2>03 · Form validation</h2><p>Can people understand an error and recover from it?</p></div><span class="tag">Error prevention · Recovery</span></div>
+  <div class="comparison">
+    <div class="demo bad">
+      <div class="demo-head">Version A · Confusing <span class="tag bad">Vague error</span></div>
+      <div class="demo-body">
+        <label for="badPhone">Number</label>
+        <input id="badPhone" type="tel" inputmode="numeric" maxlength="10" autocomplete="off" aria-describedby="badPhoneFeedback">
+        <button class="btn wide" id="badPhoneSubmit" type="button" style="background:#8790a1">Submit</button>
+        <div class="status error" id="badPhoneFeedback" role="status" aria-live="polite">Enter your number.</div>
+      </div>
+    </div>
+    <div class="demo good">
+      <div class="demo-head">Version B · Improved <span class="tag good">Specific guidance</span></div>
+      <div class="demo-body">
+        <form id="phoneForm" novalidate>
+          <label for="goodPhone">Phone number</label>
+          <input id="goodPhone" type="tel" inputmode="numeric" placeholder="10-digit number" maxlength="10" pattern="[0-9]{10}" aria-describedby="phoneHint phoneFeedback" required autocomplete="off">
+          <div class="tiny muted" id="phoneHint">Enter 10 digits, without spaces.</div>
+          <button class="btn wide" type="submit">Submit</button>
+          <div class="feedback" id="phoneFeedback" role="status" aria-live="polite">Enter your phone number.</div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="rating-row" data-rating="validation">
+    <strong class="tiny">Which is easier?</strong>
+    <button class="star" data-score="1">A is easier</button>
+    <button class="star" data-score="3">B is easier</button>
+    <button class="star" data-score="2">Both are the same</button>
+    <div class="rating-feedback" id="rating-validation" role="status" aria-live="polite" hidden></div>
+  </div>
+</article>
+
+<article class="card" style="margin-top:17px">
+  <div class="section-head" style="margin-top:0"><div><h2>04 · Checkout &amp; confirmation</h2><p>Can people see the total and know whether the action succeeded?</p></div><span class="tag">System status</span></div>
+  <div class="comparison">
+    <div class="demo bad">
+      <div class="demo-head">Version A · Confusing <span class="tag bad">Hidden details</span></div>
+      <div class="demo-body">
+        <h3>Order</h3>
+        <div class="order-row"><span>Item price</span><span>₹999</span></div>
+        <div style="font-size:23px;font-weight:bold;margin:10px 0">Total: ₹1,200</div>
+        <p class="tiny">You may not know the final amount until later.</p>
+        <button class="btn wide" id="continueOrderA" type="button" style="background:#8790a1">Continue</button>
+        <div class="feedback" id="checkoutA" role="status" aria-live="polite">No clear progress or confirmation.</div>
+      </div>
+    </div>
+    <div class="demo good">
+      <div class="demo-head">Version B · Improved <span class="tag good">Clear total</span></div>
+      <div class="demo-body">
+        <h3>Order summary</h3>
+        <div class="order-row"><span>Item subtotal</span><span>₹900</span></div>
+        <div class="order-row"><span>Delivery</span><span>₹49</span></div>
+        <div class="order-row"><span>Taxes</span><span>₹50</span></div>
+        <div class="order-row total"><span>Total</span><span>₹999</span></div>
+        <p class="tiny">Step 3 of 3 · Review and confirm</p>
+        <button class="btn wide" id="confirmOrderB" type="button">Confirm order</button>
+        <div class="feedback" id="checkoutB" role="status" aria-live="polite">Review the total before confirming.</div>
+      </div>
+    </div>
+  </div>
+  <div class="rating-row" data-rating="checkout">
+    <strong class="tiny">Which is easier?</strong>
+    <button class="star" data-score="1">A is easier</button>
+    <button class="star" data-score="3">B is easier</button>
+    <button class="star" data-score="2">Both are the same</button>
+    <div class="rating-feedback" id="rating-checkout" role="status" aria-live="polite" hidden></div>
+  </div>
+</article>
+
+<article class="card" style="margin-top:17px">
+  <div class="section-head" style="margin-top:0"><div><h2>05 · Accessibility &amp; readability</h2><p>Can people comfortably read and interact with the content?</p></div><span class="tag">Inclusive design</span></div>
+  <div class="comparison">
+    <div class="demo bad">
+      <div class="demo-head">Version A · Hard to read <span class="tag bad">Low readability</span></div>
+      <div class="demo-body" style="background:#f8f8f8;color:#b8bbc2">
+        <div style="font-size:10px;line-height:1.3;color:#b7bbc2">WELCOME TO OUR SERVICE</div>
+        <p style="font-size:10px;line-height:1.3;color:#c3c6cd">This small, low-contrast text is difficult for many people to read. The control below has little visual emphasis.</p>
+        <button class="btn" style="background:#c9cbd1;color:#b4b7bf;font-size:10px;padding:5px 8px" id="accessButtonA" type="button">Click here</button>
+        <div class="status error" id="accessFeedbackA" role="status" aria-live="polite" style="font-size:12px;display:none"></div>
+      </div>
+    </div>
+    <div class="demo good">
+      <div class="demo-head">Version B · Improved <span class="tag good">Readable</span></div>
+      <div class="demo-body">
+        <h3 style="font-size:19px">Welcome to our service</h3>
+        <p style="font-size:15px;line-height:1.8;color:#273449">Clear text, comfortable spacing and strong contrast help more people read the information.</p>
+        <button class="btn" id="accessButtonB" type="button">Continue</button>
+        <div class="feedback" id="accessFeedback" role="status" aria-live="polite">Try the button to see feedback.</div>
+      </div>
+    </div>
+  </div>
+  <div class="rating-row" data-rating="accessibility">
+    <strong class="tiny">Which is easier?</strong>
+    <button class="star" data-score="1">A is easier</button>
+    <button class="star" data-score="3">B is easier</button>
+    <button class="star" data-score="2">Both are the same</button>
+    <div class="rating-feedback" id="rating-accessibility" role="status" aria-live="polite" hidden></div>
+  </div>
+</article>
+</section>
+
+<section class="section" id="principles">
+  <div class="section-head"><div><h2>Core HCI Principles</h2><p>Understand the ideas behind the improved interfaces.</p></div></div>
+  <div class="concept-grid">
+    <div class="concept"><div class="number">01</div><h3>Affordance &amp; signifiers</h3><p>Controls should suggest how to use them. Buttons look clickable and labels make actions clear.</p></div>
+    <div class="concept"><div class="number">02</div><h3>Visibility of system status</h3><p>Keep users informed with confirmation, progress or clear feedback after an action.</p></div>
+    <div class="concept"><div class="number">03</div><h3>Error prevention &amp; recovery</h3><p>Prevent common mistakes and give helpful instructions when errors occur.</p></div>
+    <div class="concept"><div class="number">04</div><h3>Consistency &amp; standards</h3><p>Use familiar patterns, predictable labels and similar styles for similar actions.</p></div>
+    <div class="concept"><div class="number">05</div><h3>Recognition over recall</h3><p>Show options, labels and hints so people do not have to remember hidden commands.</p></div>
+    <div class="concept"><div class="number">06</div><h3>Accessibility &amp; inclusion</h3><p>Support readable text, sufficient contrast, keyboard operation and understandable labels.</p></div>
+    <div class="concept"><div class="number">07</div><h3>User control &amp; freedom</h3><p>People should be able to go back, cancel or correct unintended actions.</p></div>
+    <div class="concept"><div class="number">08</div><h3>Feedback</h3><p>Make it clear that an action was received and explain what happened next.</p></div>
+    <div class="concept"><div class="number">09</div><h3>Responsive design</h3><p>Layouts should adapt to mobile, tablet and desktop screens.</p></div>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <h3>Mini HCI knowledge check</h3><p>Choose the principle that best matches each situation.</p>
+    <div id="quiz">
+      <div class="quiz-question" data-answer="status"><strong>1. A website shows “Your changes have been saved.” Which principle is this?</strong><button class="quiz-option" data-value="consistency">Consistency</button><button class="quiz-option" data-value="status">Visibility of system status / feedback</button><button class="quiz-option" data-value="recall">Recognition over recall</button><div class="feedback quiz-feedback"></div></div>
+      <div class="quiz-question" data-answer="error" style="margin-top:20px"><strong>2. A form explains how to correct an invalid phone number. Which principle is this?</strong><button class="quiz-option" data-value="error">Error recovery</button><button class="quiz-option" data-value="color">Decoration</button><button class="quiz-option" data-value="motion">Animation</button><div class="feedback quiz-feedback"></div></div>
+      <div class="quiz-question" data-answer="access" style="margin-top:20px"><strong>3. A site supports keyboard use and readable contrast. Which principle is this?</strong><button class="quiz-option" data-value="access">Accessibility</button><button class="quiz-option" data-value="recall">Recognition only</button><button class="quiz-option" data-value="speed">Speed</button><div class="feedback quiz-feedback"></div></div>
+    </div>
+    <p id="quizScore" aria-live="polite">Score: 0 / 3 answered correctly</p>
+  </div>
+</section>
+
+<section class="section" id="results">
+  <div class="section-head"><div><h2>Results &amp; Insights</h2><p>View ratings submitted during this browser session.</p></div><button class="btn ghost" id="resetRatings">Reset ratings</button></div>
+  <div class="grid">
+    <div class="card s4"><div class="metric" id="ratingCount">0</div><div class="muted">Ratings submitted</div></div>
+    <div class="card s4"><div class="metric" id="improvedWins">0</div><div class="muted">Ratings preferring improved design</div></div>
+    <div class="card s4"><div class="metric" id="winRate">—</div><div class="muted">Improved-design preference rate</div></div>
+    <div class="card s7"><h3>Rating overview</h3><p class="tiny">A is easier, both are the same, or B is easier.</p><div id="ratingBars"><p>No ratings yet. Submit a rating in the Usability Lab.</p></div></div>
+    <div class="card s5"><h3>How to interpret this</h3><p>Ratings show a visitor's preference, not a complete usability test. For a stronger college report, ask classmates to complete the same task in each version and record task success, completion time, errors and preference.</p><div class="notice">Do not describe demo scores as real study findings.</div></div>
+    <div class="card s12"><h3>Rating details</h3><div class="table-wrap"><table><thead><tr><th>Comparison</th><th>Selected response</th><th>HCI concept</th></tr></thead><tbody id="ratingTable"><tr><td colspan="3">No ratings submitted yet.</td></tr></tbody></table></div></div>
+  </div>
+</section>
+
+<section class="section" id="about">
+  <div class="section-head"><div><h2>About the Study</h2><p>Project scope, method and limitations.</p></div></div>
+  <div class="grid">
+    <div class="card s7">
+      <h3>Project overview</h3>
+      <p><strong>EasyUI — HCI Learning Lab</strong> is a frontend educational website demonstrating how interface decisions affect usability.</p>
+      <p>It presents five pairs of interface examples: sign-in, navigation, form validation, checkout and accessibility. Visitors can interact with controls, compare versions and submit a preference rating.</p>
+      <h3 style="margin-top:20px">Objectives</h3>
+      <ul class="muted"><li>Explain HCI concepts using practical examples.</li><li>Compare problematic and improved interface patterns.</li><li>Demonstrate feedback, validation, consistency and accessibility.</li><li>Collect simple in-session preferences for discussion.</li></ul>
+    </div>
+    <div class="card s5">
+      <h3>Methodology</h3>
+      <ol class="muted"><li>Observe both interface versions.</li><li>Try the interactive controls.</li><li>Rate which version seems easier.</li><li>Review the summary and discuss why.</li></ol>
+      <h3 style="margin-top:20px">Technology used</h3><p><span class="tag">HTML</span> <span class="tag">CSS</span> <span class="tag">JavaScript</span></p>
+      <h3 style="margin-top:20px">Limitations</h3><p>This prototype does not run a controlled study automatically. Ratings are temporary and are not uploaded to a server. The examples are educational, not proof that all users will prefer one design.</p>
+    </div>
+    <div class="card s12"><h3>Suggested usability test for classmates</h3><p>Ask 5–10 volunteers to try each version. Give them the same task, such as finding the Help section or correcting a phone number. Record whether they succeed, time taken, mistakes and which version they prefer. Participation should be voluntary; do not collect passwords or sensitive information.</p></div>
+  </div>
+</section>
+
+<section class="section" id="testing">
+  <div class="section-head"><div><h2>Usability Testing Mode</h2><p>Complete short tasks while the website records task success, time and mistakes in this session.</p></div><span class="tag">Task-based evaluation</span></div>
+  <div class="notice">For a college study, ask a volunteer to try one task at a time. Start the task before they begin. The timer and mistake count are simple demonstrations, not a professional usability-testing tool.</div>
+  <div class="grid">
+    <div class="card s12">
+      <h3>Choose a task</h3>
+      <div class="task-item"><strong>Task 1 — Find HCI Principles</strong><p>Use the website navigation to open the HCI Principles section.</p><button class="btn" type="button" data-start-task="principles">Start task</button></div>
+      <div class="task-item"><strong>Task 2 — Validate a phone number</strong><p>Open Usability Lab and submit a valid 10-digit phone number in Version B.</p><button class="btn" type="button" data-start-task="phone">Start task</button></div>
+      <div class="task-item"><strong>Task 3 — Rate an improved design</strong><p>Open Usability Lab and select “B is easier” for any comparison.</p><button class="btn" type="button" data-start-task="rating">Start task</button></div>
+      <div class="notice" id="testStatus" role="status" aria-live="polite">No task is running. Choose “Start task” to begin.</div>
+      <div class="task-meta"><span>Completed tasks: <strong id="tasksCompleted">0</strong></span><span>Mistakes recorded: <strong id="testMistakes">0</strong></span><span>Last task time: <strong id="lastTaskTime">—</strong></span></div>
+      <button class="btn secondary" id="resetTestResults" type="button" style="margin-top:12px">Reset test results</button>
+    </div>
+    <div class="card s6"><h3>What is measured?</h3><p><strong>Effectiveness:</strong> whether the task was completed.</p><p><strong>Efficiency:</strong> time taken to complete the task.</p><p><strong>Errors:</strong> incorrect attempts while the task is active.</p></div>
+    <div class="card s6"><h3>How to use it in your study</h3><ol class="muted"><li>Explain the task without giving away the steps.</li><li>Ask the participant to think aloud if comfortable.</li><li>Record the result and ask what felt confusing.</li><li>Repeat with multiple volunteers and compare observations.</li></ol></div>
+  </div>
+</section>
+
+<section class="section" id="accessibilitySettings">
+  <div class="section-head"><div><h2>Accessibility Settings</h2><p>Adjust the page to explore inclusive interface design.</p></div><span class="tag">User control</span></div>
+  <div class="grid">
+    <div class="card s7">
+      <h3>Personalise your viewing experience</h3><p>Try these settings and notice how they affect readability and visual comfort.</p>
+      <div class="accessibility-controls">
+        <button class="btn" type="button" id="increaseText">A+ Increase text</button>
+        <button class="btn secondary" type="button" id="decreaseText">A− Decrease text</button>
+        <button class="btn secondary" type="button" id="toggleContrast" aria-pressed="false">Toggle high contrast</button>
+        <button class="btn secondary" type="button" id="toggleMotion" aria-pressed="false">Reduce motion</button>
+        <button class="btn ghost" type="button" id="resetAccessibility">Reset settings</button>
+      </div>
+      <div class="notice" id="accessibilityStatus" role="status" aria-live="polite">Default settings are active.</div>
+    </div>
+    <div class="card s5"><h3>Why accessibility matters</h3><p><strong>Readable text:</strong> helps people who need larger text.</p><p><strong>High contrast:</strong> makes text and controls easier to distinguish.</p><p><strong>Reduced motion:</strong> limits animations and transitions.</p><p class="tiny">These controls demonstrate a few accessibility options. They do not replace a complete accessibility audit or testing with people with disabilities.</p></div>
+    <div class="card s12"><h3>HCI connection</h3><p>Accessible design supports more people, gives users control over their experience and reduces barriers to completing tasks.</p></div>
+  </div>
+</section>
+
+<section class="section" id="survey">
+  <div class="section-head"><div><h2>User Feedback Survey</h2><p>Collect usability feedback from visitors and review a simple summary.</p></div><span class="tag">User-centred evaluation</span></div>
+  <div class="grid">
+    <div class="card s6">
+      <h3>Share your feedback</h3>
+      <form id="feedbackSurvey">
+        <label for="surveyEase">How easy was the website to use?</label>
+        <select id="surveyEase" required style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink);margin:5px 0 12px">
+          <option value="">Choose a rating</option><option value="1">1 — Very difficult</option><option value="2">2 — Difficult</option><option value="3">3 — Okay</option><option value="4">4 — Easy</option><option value="5">5 — Very easy</option>
+        </select>
+        <label for="surveyUseful">Which feature was most useful?</label>
+        <select id="surveyUseful" required style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink);margin:5px 0 12px">
+          <option value="">Choose a feature</option><option>Usability comparisons</option><option>HCI principles</option><option>Usability testing mode</option><option>Accessibility settings</option><option>Feedback and results</option><option>HCI quiz</option>
+        </select>
+        <label for="surveyComment">What would you improve? (optional)</label>
+        <textarea id="surveyComment" rows="4" maxlength="300" placeholder="Share a suggestion (maximum 300 characters)" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink);margin:5px 0 12px;resize:vertical"></textarea>
+        <button class="btn" type="submit">Submit feedback</button>
+        <div class="feedback" id="surveyMessage" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+    <div class="card s6">
+      <h3>Survey summary</h3><div class="metric" id="surveyResponses">0</div><p>Feedback responses in this browser session</p>
+      <div class="order-row"><span>Average ease rating</span><strong id="surveyAverage">—</strong></div>
+      <div class="order-row"><span>Most selected feature</span><strong id="surveyPopular">—</strong></div>
+      <div class="notice">Responses stay in this page session only. Refreshing the page clears them; no personal information is requested or sent to a server.</div>
+    </div>
+    <div class="card s12"><h3>Suggestions from visitors</h3><div id="surveyComments"><p>No feedback submitted yet.</p></div></div>
+  </div>
+</section>
+
+<footer>EasyUI · Human-Computer Interaction college project · Built with HTML, CSS and JavaScript · Educational demo only</footer>
+</main>
+
+<script>
+(function(){
+'use strict';
+
+const pageInfo={
+  dashboard:['Design for people.','Discover how small design choices make websites easier to use.'],
+  challenge:['Usability Challenge','Compare confusing and improved designs, try them and rate your experience.'],
+  principles:['Understand the principles.','Connect each design choice to a core HCI principle.'],
+  results:['Results & Insights','Review ratings submitted during this browser session.'],
+  about:['About this project','Scope, methodology and limitations of EasyUI.'],
+  testing:['Usability Testing Mode','Complete tasks and observe success, time and mistakes.'],
+  accessibilitySettings:['Accessibility Settings','Adjust text size, contrast and motion to explore inclusive design.'],
+  survey:['User Feedback Survey','Share feedback and review the session summary.']
+};
+
+let activeTestTask=null,taskStartTime=0,taskMistakes=0,completedTasks=0,lastTaskDuration='—';
+const taskLabels={principles:'Find HCI Principles',phone:'Validate a phone number',rating:'Rate an improved design'};
+
+function updateTestDisplay(){
+  document.getElementById('tasksCompleted').textContent=completedTasks;
+  document.getElementById('testMistakes').textContent=taskMistakes;
+  document.getElementById('lastTaskTime').textContent=lastTaskDuration;
+}
+
+function recordTaskMistake(message){
+  if(!activeTestTask)return;
+  taskMistakes++;
+  updateTestDisplay();
+  document.getElementById('testStatus').textContent='Mistake recorded: '+message+' Try again to complete the task.';
+}
+
+function finishTestTask(){
+  if(!activeTestTask)return;
+  const elapsed=Math.max(0,Math.round((Date.now()-taskStartTime)/1000));
+  lastTaskDuration=elapsed+' sec';
+  completedTasks++;
+  const label=taskLabels[activeTestTask];
+  activeTestTask=null;
+  updateTestDisplay();
+  document.getElementById('testStatus').textContent='Task completed: '+label+'. Time taken: '+lastTaskDuration+'. Great work! Start another task when ready.';
+}
+
+document.querySelectorAll('[data-start-task]').forEach(button=>{
+  button.addEventListener('click',()=>{
+    activeTestTask=button.dataset.startTask;
+    taskStartTime=Date.now();
+    taskMistakes=0;
+    updateTestDisplay();
+    document.getElementById('testStatus').textContent='Task started: '+taskLabels[activeTestTask]+'. Follow the instructions and complete the task.';
+    if(activeTestTask==='phone'||activeTestTask==='rating')showPage('challenge');
+    else document.getElementById('testStatus').scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+});
+
+document.getElementById('resetTestResults').addEventListener('click',()=>{
+  activeTestTask=null;
+  taskStartTime=0;
+  taskMistakes=0;
+  completedTasks=0;
+  lastTaskDuration='—';
+  updateTestDisplay();
+  document.getElementById('testStatus').textContent='Test results reset. Choose “Start task” to begin again.';
+});
+
+function showPage(id){
+  if(!pageInfo[id])return;
+  document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+  document.getElementById('pageTitle').textContent=pageInfo[id][0];
+  document.getElementById('pageSubtitle').textContent=pageInfo[id][1];
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>{
+  const id=b.dataset.page;
+  if(activeTestTask==='principles'){
+    if(id==='principles')finishTestTask();
+    else if(id!=='testing')recordTaskMistake('You opened a different section.');
+  }
+  showPage(id);
+}));
+
+document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.goto)));
+
+/* Email validation used by both sign-in versions.
+   The domain must contain valid alphanumeric labels, so @#gmail.com is rejected. */
+const validEmailPattern=/^[^\s@]+@[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)+$/;
+
+/* Version A sign-in */
+document.getElementById('badLoginGo').addEventListener('click',()=>{
+  const email=document.getElementById('badEmail');
+  const password=document.getElementById('badPassword');
+  const out=document.getElementById('badLoginFeedback');
+  const enteredEmail=email.value.trim();
+  const enteredPassword=password.value;
+
+  email.removeAttribute('aria-invalid');
+  password.removeAttribute('aria-invalid');
+  out.style.color='var(--bad)';
+
+  if(!enteredEmail||!enteredPassword){
+    out.textContent='Invalid email or password. Please enter both fields.';
+    if(!enteredEmail){
+      email.setAttribute('aria-invalid','true');
+      email.focus();
+    }else{
+      password.setAttribute('aria-invalid','true');
+      password.focus();
+    }
+    return;
+  }
+
+  if(!validEmailPattern.test(enteredEmail)){
+    out.textContent='Invalid email or password. Please check your email.';
+    email.setAttribute('aria-invalid','true');
+    email.focus();
+    return;
+  }
+
+  if(enteredPassword.length<5){
+    out.textContent='Invalid email or password. Password must be at least 5 characters.';
+    password.setAttribute('aria-invalid','true');
+    password.focus();
+    return;
+  }
+
+  out.textContent='Sign in successful, but it is confusing and needs improvement.';
+});
+
+/* Version B sign-in */
+document.getElementById('goodLoginForm').addEventListener('submit',e=>{
+  e.preventDefault();
+
+  const email=document.getElementById('goodEmail');
+  const pass=document.getElementById('goodPassword');
+  const out=document.getElementById('goodLoginFeedback');
+  const enteredEmail=email.value.trim();
+  const enteredPassword=pass.value;
+
+  email.removeAttribute('aria-invalid');
+  pass.removeAttribute('aria-invalid');
+  out.style.color='var(--bad)';
+
+  if(!enteredEmail||!enteredPassword){
+    out.textContent='Invalid email or password. Please enter both fields.';
+    if(!enteredEmail){
+      email.setAttribute('aria-invalid','true');
+      email.focus();
+    }else{
+      pass.setAttribute('aria-invalid','true');
+      pass.focus();
+    }
+    return;
+  }
+
+  if(!validEmailPattern.test(enteredEmail)){
+    out.textContent='Invalid email or password. Please check your email.';
+    email.setAttribute('aria-invalid','true');
+    email.focus();
+    return;
+  }
+
+  if(enteredPassword.length<5){
+    out.textContent='Invalid email or password. Password must be at least 5 characters.';
+    pass.setAttribute('aria-invalid','true');
+    pass.focus();
+    return;
+  }
+
+  out.textContent='Sign in successful. It matches the email ID format and required password length.';
+  out.style.color='var(--good)';
+});
+
+/* Navigation demo */
+const descriptions={
+  Home:'Home: Return to the main page.',
+  Services:'Services: Explore available services.',
+  Pricing:'Pricing: View plans and costs.',
+  Help:'Help: Find support and answers.'
+};
+
+document.querySelectorAll('[data-nav]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const a=b.dataset.nav;
+    const label=b.dataset.label;
+    const el=document.getElementById(a==='A'?'navA':'navB');
+
+    el.textContent=a==='A'
+      ?'You selected "'+label+'", but the purpose of this item is unclear.'
+      :descriptions[label];
+
+    el.className='status '+(a==='A'?'error':'success');
+  });
+});
+
+/* Version A phone validation */
+const badPhoneInput=document.getElementById('badPhone');
+const badPhoneFeedback=document.getElementById('badPhoneFeedback');
+
+document.getElementById('badPhoneSubmit').addEventListener('click',()=>{
+  const value=badPhoneInput.value.trim();
+  badPhoneFeedback.style.color='var(--bad)';
+
+  if(!/^[0-9]{10}$/.test(value)){
+    badPhoneFeedback.textContent='Invalid input. Please enter exactly 10 digits.';
+    badPhoneFeedback.className='status error';
+    badPhoneInput.setAttribute('aria-invalid','true');
+
+    if(activeTestTask==='phone'){
+      recordTaskMistake('The number needs exactly 10 digits.');
+    }
+  }else{
+    badPhoneFeedback.textContent='Valid input, but it is confusing and needs improvement.';
+    badPhoneFeedback.className='status error';
+    badPhoneInput.removeAttribute('aria-invalid');
+  }
+});
+
+/* Version B phone validation */
+const goodPhoneInput=document.getElementById('goodPhone');
+const goodPhoneFeedback=document.getElementById('phoneFeedback');
+
+goodPhoneInput.addEventListener('input',()=>{
+  const value=goodPhoneInput.value.trim();
+  goodPhoneInput.removeAttribute('aria-invalid');
+
+  if(value.length===0){
+    goodPhoneFeedback.textContent='Enter your phone number.';
+    goodPhoneFeedback.style.color='var(--muted)';
+    return;
+  }
+
+  if(!/^[0-9]{10}$/.test(value)){
+    goodPhoneFeedback.textContent='Invalid input. Please enter exactly 10 digits, without spaces.';
+    goodPhoneFeedback.style.color='var(--bad)';
+    goodPhoneInput.setAttribute('aria-invalid','true');
+  }else{
+    goodPhoneFeedback.textContent='Valid input. The number matches the expected format and looks good.';
+    goodPhoneFeedback.style.color='var(--good)';
+    goodPhoneInput.removeAttribute('aria-invalid');
+  }
+});
+
+document.getElementById('phoneForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const value=goodPhoneInput.value.trim();
+
+  if(!/^[0-9]{10}$/.test(value)){
+    goodPhoneFeedback.textContent='Invalid input. Please enter exactly 10 digits, without spaces.';
+    goodPhoneFeedback.style.color='var(--bad)';
+    goodPhoneInput.setAttribute('aria-invalid','true');
+
+    if(activeTestTask==='phone'){
+      recordTaskMistake('The phone number needs exactly 10 digits.');
+    }
+
+    goodPhoneInput.focus();
+  }else{
+    goodPhoneFeedback.textContent='Valid input. The number matches the expected format and looks good.';
+    goodPhoneFeedback.style.color='var(--good)';
+    goodPhoneInput.removeAttribute('aria-invalid');
+
+    if(activeTestTask==='phone'){
+      finishTestTask();
+    }
+  }
+});
+
+/* Checkout confirmation */
+document.getElementById('continueOrderA').addEventListener('click',()=>{
+  const out=document.getElementById('checkoutA');
+  out.textContent='Order confirmed, but no clear progress. Payment was taken.';
+  out.style.color='var(--bad)';
+});
+
+document.getElementById('confirmOrderB').addEventListener('click',()=>{
+  const out=document.getElementById('checkoutB');
+  out.textContent='Order confirmed and payment was taken.';
+  out.style.color='var(--good)';
+});
+
+/* Accessibility demo buttons */
+document.getElementById('accessButtonA').addEventListener('click',()=>{
+  const out=document.getElementById('accessFeedbackA');
+  out.textContent='The button is too small, and the text above is difficult to read.';
+  out.style.display='block';
+});
+
+document.getElementById('accessButtonB').addEventListener('click',()=>{
+  const out=document.getElementById('accessFeedback');
+  out.textContent='The button is easy to see and provides clear feedback.';
+  out.style.color='var(--good)';
+});
+
+/* Ratings and results */
+const ratingNames={
+  signin:'Sign-in form',
+  navigation:'Navigation menu',
+  validation:'Form validation',
+  checkout:'Checkout & confirmation',
+  accessibility:'Accessibility & readability'
+};
+
+const ratingConcepts={
+  signin:'Learnability & feedback',
+  navigation:'Consistency & recognition',
+  validation:'Error prevention & recovery',
+  checkout:'Visibility of system status',
+  accessibility:'Accessibility & inclusion'
+};
+
+const ratingText={
+  1:'A is easier',
+  2:'Both are the same',
+  3:'B is easier'
+};
+
+const ratingReasons={
+  1:'A has a valid input, but it is confusing and needs improvement. B is the clearer option.',
+  2:'A is different from B. B is the clearer option because it is less confusing and provides better guidance.',
+  3:'B is easier because it matches the expected format, provides clear feedback and explains what to do.'
+};
+
+const ratings={};
+
+document.querySelectorAll('[data-rating]').forEach(group=>{
+  const key=group.dataset.rating;
+
+  group.querySelectorAll('button[data-score]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      ratings[key]=Number(btn.dataset.score);
+
+      group.querySelectorAll('button[data-score]').forEach(b=>{
+        b.classList.toggle('selected',b===btn);
+      });
+
+      const output=document.getElementById('rating-'+key);
+      output.hidden=false;
+
+      if(key==='navigation' && ratings[key]===1){
+        output.textContent='A has a valid input, but its purpose is unclear. So B is the clearer option.';
+      }else if(key==='accessibility' && ratings[key]===1){
+        output.textContent='Option A is a valid input, but it is too small and difficult to read. Option B is the clearer option.';
+      }else{
+        output.textContent=ratingReasons[ratings[key]];
+      }
+
+      if(activeTestTask==='rating'){
+        if(ratings[key]===3){
+          finishTestTask();
+        }else{
+          recordTaskMistake('Choose “B is easier” for this task.');
+        }
+      }
+
+      renderResults();
+    });
+  });
+});
+
+function renderResults(){
+  const values=Object.values(ratings);
+  const count=values.length;
+  const wins=values.filter(v=>v===3).length;
+
+  document.getElementById('ratingCount').textContent=count;
+  document.getElementById('improvedWins').textContent=wins;
+  document.getElementById('winRate').textContent=count?Math.round(wins/count*100)+'%':'—';
+
+  const bars=document.getElementById('ratingBars');
+  const table=document.getElementById('ratingTable');
+
+  if(!count){
+    bars.innerHTML='<p>No ratings yet. Submit a rating in the Usability Lab.</p>';
+    table.innerHTML='<tr><td colspan="3">No ratings submitted yet.</td></tr>';
+    return;
+  }
+
+  bars.replaceChildren();
+  table.replaceChildren();
+
+  Object.keys(ratingNames).forEach(key=>{
+    if(!(key in ratings))return;
+
+    const score=ratings[key];
+    const line=document.createElement('div');
+    line.className='barline';
+
+    const name=document.createElement('span');
+    name.className='name';
+    name.textContent=ratingNames[key];
+
+    const track=document.createElement('div');
+    track.className='track';
+
+    const fill=document.createElement('div');
+    fill.className='fill';
+    fill.style.width=(score===1?33:score===2?66:100)+'%';
+    track.appendChild(fill);
+
+    const val=document.createElement('span');
+    val.className='value';
+    val.textContent=score+'/3';
+
+    line.append(name,track,val);
+    bars.appendChild(line);
+
+    const tr=document.createElement('tr');
+    [ratingNames[key],ratingText[score],ratingConcepts[key]].forEach(t=>{
+      const td=document.createElement('td');
+      td.textContent=t;
+      tr.appendChild(td);
+    });
+    table.appendChild(tr);
+  });
+}
+
+function resetRatings(){
+  Object.keys(ratings).forEach(k=>delete ratings[k]);
+
+  document.querySelectorAll('[data-rating] button[data-score]').forEach(b=>{
+    b.classList.remove('selected');
+  });
+
+  document.querySelectorAll('[id^="rating-"]').forEach(el=>{
+    el.textContent='';
+    if(el.classList.contains('rating-feedback'))el.hidden=true;
+  });
+
+  renderResults();
+}
+
+document.getElementById('resetRatings').addEventListener('click',resetRatings);
+
+/* HCI quiz */
+document.querySelectorAll('.quiz-question').forEach(q=>{
+  q.querySelectorAll('.quiz-option').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(q.dataset.done==='true')return;
+
+      const correct=btn.dataset.value===q.dataset.answer;
+      q.dataset.done='true';
+      btn.classList.add(correct?'correct':'incorrect');
+      q.querySelector('.quiz-feedback').textContent=correct
+        ?'Correct! Well done.'
+        :'Not quite. The correct answer is highlighted.';
+
+      if(!correct){
+        const right=q.querySelector('[data-value="'+q.dataset.answer+'"]');
+        if(right)right.classList.add('correct');
+      }
+
+      let score=0;
+      document.querySelectorAll('.quiz-question').forEach(qq=>{
+        if(qq.dataset.done==='true'&&qq.querySelector('.quiz-option.correct[data-value="'+qq.dataset.answer+'"]'))score++;
+      });
+
+      document.getElementById('quizScore').textContent='Score: '+score+' / 3 answered correctly';
+    });
+  });
+});
+
+/* Accessibility settings */
+let textScale=0;
+
+function applyTextScale(){
+  document.body.classList.toggle('large-text',textScale>0);
+  document.body.style.fontSize=textScale===0?'':(textScale>0?'18px':'14px');
+  document.getElementById('accessibilityStatus').textContent='Text size: '+(textScale>0?'larger':textScale<0?'smaller':'default')+'. Other settings remain as selected.';
+}
+
+document.getElementById('increaseText').addEventListener('click',()=>{
+  textScale=Math.min(1,textScale+1);
+  applyTextScale();
+});
+
+document.getElementById('decreaseText').addEventListener('click',()=>{
+  textScale=Math.max(-1,textScale-1);
+  applyTextScale();
+});
+
+document.getElementById('toggleContrast').addEventListener('click',function(){
+  const enabled=document.body.classList.toggle('high-contrast');
+  this.setAttribute('aria-pressed',String(enabled));
+  document.getElementById('accessibilityStatus').textContent='High contrast '+(enabled?'enabled.':'disabled.');
+});
+
+document.getElementById('toggleMotion').addEventListener('click',function(){
+  const enabled=document.body.classList.toggle('reduce-motion');
+  this.setAttribute('aria-pressed',String(enabled));
+  document.getElementById('accessibilityStatus').textContent='Reduced motion '+(enabled?'enabled.':'disabled.');
+});
+
+document.getElementById('resetAccessibility').addEventListener('click',()=>{
+  textScale=0;
+  document.body.classList.remove('large-text','high-contrast','reduce-motion');
+  document.body.style.fontSize='';
+  document.getElementById('toggleContrast').setAttribute('aria-pressed','false');
+  document.getElementById('toggleMotion').setAttribute('aria-pressed','false');
+  document.getElementById('accessibilityStatus').textContent='Accessibility settings reset to default.';
+});
+
+/* User feedback survey */
+const surveyResponses=[];
+const surveyForm=document.getElementById('feedbackSurvey');
+
+surveyForm.addEventListener('submit',event=>{
+  event.preventDefault();
+
+  const ease=Number(document.getElementById('surveyEase').value);
+  const useful=document.getElementById('surveyUseful').value;
+  const comment=document.getElementById('surveyComment').value.trim();
+
+  if(!ease||!useful){
+    document.getElementById('surveyMessage').textContent='Please choose a rating and a useful feature.';
+    return;
+  }
+
+  surveyResponses.push({ease,useful,comment});
+  surveyForm.reset();
+  document.getElementById('surveyMessage').textContent='Thank you! Your feedback was added to this session summary.';
+  renderSurvey();
+});
+
+function renderSurvey(){
+  document.getElementById('surveyResponses').textContent=surveyResponses.length;
+
+  const average=surveyResponses.length
+    ?surveyResponses.reduce((sum,item)=>sum+item.ease,0)/surveyResponses.length
+    :0;
+
+  document.getElementById('surveyAverage').textContent=surveyResponses.length
+    ?average.toFixed(1)+' / 5'
+    :'—';
+
+  const counts={};
+  surveyResponses.forEach(item=>{
+    counts[item.useful]=(counts[item.useful]||0)+1;
+  });
+
+  let popular='—';
+  Object.keys(counts).forEach(key=>{
+    if(popular==='—'||counts[key]>counts[popular])popular=key;
+  });
+
+  document.getElementById('surveyPopular').textContent=popular;
+
+  const comments=document.getElementById('surveyComments');
+  comments.replaceChildren();
+
+  const withComments=surveyResponses.filter(item=>item.comment);
+
+  if(!withComments.length){
+    const p=document.createElement('p');
+    p.textContent='No written suggestions submitted yet.';
+    comments.appendChild(p);
+    return;
+  }
+
+  withComments.slice().reverse().forEach(item=>{
+    const div=document.createElement('div');
+    div.className='survey-comment';
+    div.textContent=item.comment;
+    comments.appendChild(div);
+  });
+}
+
+renderSurvey();
+})();
+</script>
+</body>
+</html>
